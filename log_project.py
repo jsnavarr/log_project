@@ -30,7 +30,7 @@ def most_popular_article():
                   count(log.id) as views \
               from articles \
                   join log \
-                      on log.path like CONCAT('%', articles.slug) \
+                      on log.path = CONCAT('/article/', articles.slug) \
               group by title \
               order by views desc limit 3;")
     # Print the result of running the query
