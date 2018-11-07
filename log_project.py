@@ -78,11 +78,11 @@ def days_with_errors():
             This data will be formatted in python before being displayed"""
     c.execute("select date_all, \
                   views, views_e \
-              from (select to_char(time, 'YYYY-MM-DD') as date_all,\
+              from (select to_char(time, 'Mon DD, YYYY') as date_all,\
                         count(*) as views \
                     from log \
                     group by date_all) as all_views \
-                    join (select to_char(time, 'YYYY-MM-DD') as date_e, \
+                    join (select to_char(time, 'Mon DD, YYYY') as date_e, \
                               count(*) as views_e \
                           from log \
                           where status <> '200 OK' \
@@ -96,15 +96,10 @@ def days_with_errors():
         row = c.fetchone()
         if row is None:
             break
-        '''Get the string "YYYY-MM-DD" from the DB and put it in a
-            datetime object'''
-        date_obj = datetime.strptime(row[0], "%Y-%m-%d")
-        '''convert the "YYYY-MM-DD" datetime object to "Month Day, Year"'''
-        formatted_date = datetime.strftime(date_obj, "%B %d, %Y")
         '''Divide the views leading to an error by the total of views and
             multiply the result by 100 to get the percentage'''
         errors = (float(row[2])/float(row[1]))*100
-        print("    * {0} - {1:.1f}% errors".format(formatted_date, errors))
+        print("    * {0} - {1:.1f}% errors".format(row[0], errors))
     db.close()
     return
 
