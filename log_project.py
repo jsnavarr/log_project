@@ -50,19 +50,14 @@ def most_popular_author():
     """Count the views of each article (joining articles, authors and log DB)
         then sum up all the views of articles written by the same author
         (grouping by author name)"""
-    c.execute("select name,\
-                  sum(views) as views \
-              from (select title, \
-                        name, count(log.id) as views \
+    c.execute("select name, count(log.id) as views \
                     from ((authors \
-                        join articles \
-                            on authors.id = author) \
-                    join log \
-                        on log.path like CONCAT('%', slug)) \
-                    group by title, \
-                    name) as subq\
-              group by name \
-              order by views desc;")
+                            join articles \
+                                on authors.id = author) \
+                            join log \
+                                on log.path = CONCAT('/article/', slug)) \
+                    group by name\
+                    order by views desc;")
     print_results(c, "views")
     db.close()
     return
